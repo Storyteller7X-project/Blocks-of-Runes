@@ -536,10 +536,19 @@ function doPlace(piece,cells,gr,gc,hintPlaced){
   checkWin();
 }
 function resetLevel(){
-  if(drag)return;board=[];for(var r=0;r<lvl.gs;r++){board[r]=[];for(var c=0;c<lvl.gs;c++)board[r][c]=0;}
+  if(drag)return;
+  // Save hint-placed pieces before reset
+  var savedHints=[];
+  hintLockedPieces.forEach(function(pid){if(placements[pid])savedHints.push({pid:pid,r:placements[pid].r,c:placements[pid].c});});
+  board=[];for(var r=0;r<lvl.gs;r++){board[r]=[];for(var c=0;c<lvl.gs;c++)board[r][c]=0;}
   placedSet=new Set();placements={};hintLockedPieces=new Set();
   for(var r2=0;r2<lvl.gs;r2++)for(var c2=0;c2<lvl.gs;c2++)setCellEmpty(r2,c2);
   lvl.pieces.forEach(function(p){var card=document.getElementById("pc-"+p.id);if(card)card.classList.remove("placed","dragging");});
+  // Re-place hint-locked pieces
+  savedHints.forEach(function(h){
+    var piece=null;for(var i=0;i<lvl.pieces.length;i++){if(lvl.pieces[i].id===h.pid){piece=lvl.pieces[i];break;}}
+    if(piece){doPlace(piece,piece.cells,h.r,h.c,true);hintLockedPieces.add(h.pid);}
+  });
   levelStartWall=Date.now();tickTimer();
 }
 function checkWin(){
