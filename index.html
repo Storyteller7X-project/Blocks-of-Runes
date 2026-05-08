@@ -674,26 +674,29 @@ function showCollectedReward(idx){
 
 // leaderboard
 function loadLadder(){
-  var url=localStorage.getItem("nb_webhook");
   var ld=document.getElementById("ladder-table");
   var ls=document.getElementById("ladder-status");
   if(!ld)return;
-  // Show local players first
-  var local=getPlayers().filter(function(p){return p.done;});
-  renderLadder(local,ld,ls,false);
-  // Then try to fetch online
-  if(!url){ls.textContent="";}
-  ls.textContent="Loading global ladder...";
-  var getUrl=url.replace("/exec","")+"?action=leaderboard";
-  // Try doGet on same script URL
-  fetch(url+"?action=leaderboard",{method:"GET",mode:"cors"})
+  var gistId=CONFIG.gistId||localStorage.getItem(GIST_KEY);
+  ls.textContent="Loading...";
+  if(!gistId){
+    var local=getPlayers().filter(function(p){return p.done&&!isTestUser(p.discord);});
+    var best={};local.forEach(function(p){if(!best[p.discord]||p.totalMs<best[p.discord].totalMs)best[p.discord]=p;});
+    renderLadder(Object.values(best),ld,ls,false);return;
+  }
+  fetch("https://api.github.com/gists/"+gistId,{headers:{"Accept":"application/vnd.github.v3+json"}})
     .then(function(r){return r.json();})
-    .then(function(data){
-      if(data&&data.players){renderLadder(data.players,ld,ls,true);}
+    .then(function(d){
+      if(d.files&&d.files["leaderboard.json"]){
+        var data=JSON.parse(d.files["leaderboard.json"].content);
+        if(data&&data.players){renderLadder(data.players,ld,ls,true);return;}
+      }
+      throw new Error("no data");
     })
     .catch(function(){
-      // If CORS fails, show local only
-      ls.textContent="Global ladder unavailable \u2014 showing local results.";
+      var local=getPlayers().filter(function(p){return p.done&&!isTestUser(p.discord);});
+      var best={};local.forEach(function(p){if(!best[p.discord]||p.totalMs<best[p.discord].totalMs)best[p.discord]=p;});
+      renderLadder(Object.values(best),ld,ls,false);
     });
 }
 
