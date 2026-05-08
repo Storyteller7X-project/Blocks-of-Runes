@@ -176,13 +176,13 @@ input[type=text]:focus{border-color:color-mix(in srgb,var(--acc)40%,transparent)
     <div style="font-size:14px;letter-spacing:2px;color:#b44fff;margin-top:8px;font-family:Orbitron,sans-serif;" id="done-time"></div>
     <div style="font-size:10px;color:#ff8844;margin-top:5px;letter-spacing:1px;" id="done-penalty"></div>
   </div>
-  <div style="font-size:10px;color:var(--dim);letter-spacing:1px;margin-bottom:12px;">Click a fragment to view:</div>
+  <div style="font-size:13px;color:var(--text);letter-spacing:2px;margin-bottom:14px;opacity:0.85;">Click a fragment to view:</div>
   <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;" id="done-review"></div>
   <button class="btn btn-sm" onclick="openLadderModal()" style="--acc:#ff3355;margin-bottom:12px;letter-spacing:3px;">&#9878; VIEW LADDER</button>
 <div id="ladder-section" style="margin-top:16px;width:100%;max-width:520px;">
-  <div style="font-family:Orbitron,sans-serif;font-size:11px;letter-spacing:4px;color:#9d4edd;margin-bottom:10px;text-align:center;">ONLINE LADDER</div>
-  <div id="ladder-table" style="font-size:10px;width:100%;"></div>
-  <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px;"><div id="ladder-status" style="font-size:10px;color:var(--dim);text-align:center;"></div><button class="btn btn-sm" onclick="loadLadder()" style="--acc:#9d4edd;font-size:9px;padding:4px 10px;">&#8635;</button></div>
+  <div style="font-family:Orbitron,sans-serif;font-size:16px;letter-spacing:6px;color:#9d4edd;margin-bottom:12px;text-align:center;text-shadow:0 0 20px #9d4edd;">ONLINE LADDER</div>
+  <div id="ladder-table" style="font-size:13px;width:100%;"></div>
+  <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px;"><div id="ladder-status" style="font-size:11px;color:var(--dim);text-align:center;"></div><button class="btn btn-sm" onclick="loadLadder()" style="--acc:#9d4edd;font-size:9px;padding:4px 10px;">&#8635;</button></div>
 </div>
 <button class="btn" onclick="playAgain()" style="--acc:#9d4edd;margin-top:8px;">PLAY AGAIN</button>
 </div>
@@ -270,8 +270,8 @@ document.getElementById("music-btn").addEventListener("click",toggleMusic);
 // config
 var CONFIG={
   musicUrl:"https://storyteller7x-project.github.io/Blocks-of-Runes/vastayan_glade.mp3",          // raw GitHub URL to .mp3 file
-  gistId:"58cc9f427c5b68db7913d2eb72bea444",            // GitHub Gist ID (for online leaderboard)
-  ghToken:"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",           // GitHub token with gist scope (fine-grained recommended)
+  gistId:"",            // GitHub Gist ID (for online leaderboard)
+  ghToken:"",           // GitHub token with gist scope (fine-grained recommended)
   sheetsUrl:"",         // Google Sheets webhook URL (optional, for backup logging)
 };
 
@@ -670,7 +670,7 @@ function loadLadder(){
   var local=getPlayers().filter(function(p){return p.done;});
   renderLadder(local,ld,ls,false);
   // Then try to fetch online
-  if(!url){ls.textContent="Configure your Gist ID to enable the global leaderboard.";return;}
+  if(!url){ls.textContent="";}
   ls.textContent="Loading global ladder...";
   var getUrl=url.replace("/exec","")+"?action=leaderboard";
   // Try doGet on same script URL
