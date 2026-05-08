@@ -292,18 +292,21 @@ window.addEventListener("load",function(){
     document.getElementById("r-discord").value=saved;
     document.getElementById("r-welcome").textContent="Welcome back, "+saved+"!";
     document.getElementById("r-welcome").style.display="block";
-    // Check if this player already finished — go straight to done screen
-    var all=getPlayers();
-    var existing=all.find(function(p){return p.discord===saved;});
-    if(existing&&existing.done){
-      player=existing;
-      tryPlayMusic();
-      showAllDone();
+    // Only redirect to done screen if countdown has already passed
+    if(Date.now() >= LAUNCH_UTC){
+      var all=getPlayers();
+      var existing=all.find(function(p){return p.discord===saved;});
+      if(existing&&existing.done){
+        player=existing;
+        tryPlayMusic();
+        showAllDone();
+      }
     }
   }
 });
 
 function doRegister(){
+  if(Date.now() < LAUNCH_UTC) return; // locked
   var disc=document.getElementById("r-discord").value.trim();
   if(!disc){document.getElementById("r-err").style.display="block";return;}
   document.getElementById("r-err").style.display="none";
