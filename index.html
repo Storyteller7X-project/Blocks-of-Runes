@@ -274,8 +274,8 @@ document.getElementById("music-btn").addEventListener("click",toggleMusic);
 // config
 var CONFIG={
   musicUrl:"https://storyteller7x-project.github.io/Blocks-of-Runes/vastayan_glade.mp3",          // raw GitHub URL to .mp3 file
-  gistId:"",            // GitHub Gist ID (for online leaderboard)
-  ghToken:"",           // GitHub token with gist scope (fine-grained recommended)
+  gistId:"58cc9f427c5b68db7913d2eb72bea444",            // GitHub Gist ID (for online leaderboard)
+  ghToken:"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",           // GitHub token with gist scope (fine-grained recommended)
   sheetsUrl:"",         // Google Sheets webhook URL (optional, for backup logging)
 };
 
@@ -540,7 +540,7 @@ function resetLevel(){
   placedSet=new Set();placements={};hintLockedPieces=new Set();
   for(var r2=0;r2<lvl.gs;r2++)for(var c2=0;c2<lvl.gs;c2++)setCellEmpty(r2,c2);
   lvl.pieces.forEach(function(p){var card=document.getElementById("pc-"+p.id);if(card)card.classList.remove("placed","dragging");});
-  levelStartWall=Date.now();levelPenaltyMs=0;tickTimer();
+  levelStartWall=Date.now();tickTimer();
 }
 function checkWin(){
   for(var r=0;r<lvl.gs;r++)for(var c=0;c<lvl.gs;c++)if(board[r][c]===0)return;
