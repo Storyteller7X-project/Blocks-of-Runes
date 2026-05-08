@@ -61,7 +61,7 @@ input[type=text]:focus{border-color:color-mix(in srgb,var(--acc)40%,transparent)
 <body>
 <div id="theme-bg"></div>
 <audio id="bgm" loop preload="none"></audio>
-<button class="btn btn-sm" id="music-btn">&#9834; ON</button>
+<button class="btn btn-sm" id="music-btn">&#9834; OFF</button>
 <div id="music-credit" style="display:none;position:fixed;top:48px;right:11px;font-size:8px;color:rgba(190,140,255,.6);letter-spacing:.5px;text-align:right;pointer-events:none;line-height:1.5;z-index:201;">Music: Vastayan Glade – Legends of Runeterra<br>© Riot Games · Community use only</div>
 <div id="drag-float"></div>
 
@@ -262,14 +262,14 @@ var LEVELS=[
 
 // AUDIO
 var bgm=document.getElementById("bgm"),musicOn=false;
-function tryPlayMusic(){var url=CONFIG.musicUrl||localStorage.getItem("nb_music_url");if(!url)return;if(bgm.getAttribute("src")!==url){bgm.setAttribute("src",url);bgm.load();}bgm.play().then(function(){musicOn=true;document.getElementById("music-btn").textContent="\u266a ON";}).catch(function(){});}
-function stopMusic(){bgm.pause();bgm.currentTime=0;musicOn=false;document.getElementById("music-btn").textContent="\u266a OFF";}
+function tryPlayMusic(){var url=CONFIG.musicUrl||localStorage.getItem("nb_music_url");if(!url)return;if(bgm.getAttribute("src")!==url){bgm.setAttribute("src",url);bgm.load();}bgm.play().then(function(){musicOn=true;document.getElementById("music-btn").textContent="\u266a OFF";}).catch(function(){});}
+function stopMusic(){bgm.pause();bgm.currentTime=0;musicOn=false;document.getElementById("music-btn").textContent="\u266a ON";}
 function toggleMusic(){musicOn?stopMusic():tryPlayMusic();}
 document.getElementById("music-btn").addEventListener("click",toggleMusic);
 
 // config
 var CONFIG={
-  musicUrl:"https://raw.githubusercontent.com/Storyteller7X-project/Blocks-of-Runes/main/vastayan_glade.mp3",          // raw GitHub URL to .mp3 file
+  musicUrl:"https://storyteller7x-project.github.io/Blocks-of-Runes/vastayan_glade.mp3",          // raw GitHub URL to .mp3 file
   gistId:"",            // GitHub Gist ID (for online leaderboard)
   ghToken:"",           // GitHub token with gist scope (fine-grained recommended)
   sheetsUrl:"",         // Google Sheets webhook URL (optional, for backup logging)
