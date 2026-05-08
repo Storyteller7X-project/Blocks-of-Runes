@@ -292,8 +292,9 @@ window.addEventListener("load",function(){
     document.getElementById("r-discord").value=saved;
     document.getElementById("r-welcome").textContent="Welcome back, "+saved+"!";
     document.getElementById("r-welcome").style.display="block";
-    // Only redirect to done screen if countdown has already passed
-    if(Date.now() >= LAUNCH_UTC){
+    var BYPASS_USERS=["lavamat","nextstoryteller","test321"];
+    var isSavedBypass=BYPASS_USERS.indexOf(saved.toLowerCase())>=0;
+    if(Date.now()>=LAUNCH_UTC||isSavedBypass){
       var all=getPlayers();
       var existing=all.find(function(p){return p.discord===saved;});
       if(existing&&existing.done){
