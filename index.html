@@ -292,6 +292,14 @@ window.addEventListener("load",function(){
     document.getElementById("r-discord").value=saved;
     document.getElementById("r-welcome").textContent="Welcome back, "+saved+"!";
     document.getElementById("r-welcome").style.display="block";
+    // Check if this player already finished — go straight to done screen
+    var all=getPlayers();
+    var existing=all.find(function(p){return p.discord===saved;});
+    if(existing&&existing.done){
+      player=existing;
+      tryPlayMusic();
+      showAllDone();
+    }
   }
 });
 
