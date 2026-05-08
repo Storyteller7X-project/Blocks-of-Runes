@@ -118,7 +118,11 @@ input[type=text]:focus{border-color:color-mix(in srgb,var(--acc)40%,transparent)
       <div style="font-size:11px;letter-spacing:1px;color:var(--text);margin-bottom:7px;opacity:.9;white-space:nowrap;">PLEASE, ENTER YOUR <span style="color:#c9a84c;font-weight:bold;letter-spacing:2px;">FULL</span> DISCORD USERNAME ONLY</div>
       <input type="text" id="r-discord" placeholder="" maxlength="60" autocomplete="off" style="font-size:16px;padding:13px 16px;letter-spacing:1px;">
     </div>
-    <button class="btn" onclick="doRegister()" style="width:100%;letter-spacing:5px;font-size:15px;padding:14px;">BEGIN &#8594;</button>
+    <div id="countdown-wrap" style="text-align:center;display:none;">
+      <div style="font-size:10px;letter-spacing:3px;color:var(--dim);margin-bottom:8px;">GAME UNLOCKS IN</div>
+      <div id="countdown-timer" style="font-family:Orbitron,sans-serif;font-size:clamp(22px,6vw,36px);letter-spacing:4px;color:#ff3355;text-shadow:0 0 20px #ff3355;margin-bottom:8px;">--:--:--</div>
+    </div>
+    <button class="btn" id="begin-btn" onclick="doRegister()" style="width:100%;letter-spacing:5px;font-size:15px;padding:14px;display:none;">BEGIN &#8594;</button>
     <div id="r-err" style="color:#ff4466;font-size:11px;text-align:center;display:none;">Please enter your Discord username.</div>
     <div id="r-welcome" style="display:none;text-align:center;font-size:11px;color:#c9a84c;letter-spacing:1px;margin-top:4px;"></div>
   </div>
@@ -184,7 +188,7 @@ input[type=text]:focus{border-color:color-mix(in srgb,var(--acc)40%,transparent)
   <div id="ladder-table" style="font-size:13px;width:100%;"></div>
   <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px;"><div id="ladder-status" style="font-size:11px;color:var(--dim);text-align:center;"></div><button class="btn btn-sm" onclick="loadLadder()" style="--acc:#9d4edd;font-size:9px;padding:4px 10px;">&#8635;</button></div>
 </div>
-<button class="btn" onclick="playAgain()" style="--acc:#9d4edd;margin-top:8px;">PLAY AGAIN</button>
+
 </div>
 
 <script>
@@ -280,7 +284,7 @@ var SK="nb_v7";
 var USER_KEY="bor_saved_discord";
 var GIST_KEY="bor_gist_id";
 var GH_TOKEN_KEY="bor_gh_token";
-function isTestUser(d){return d.trim().toLowerCase()==="test";}
+function isTestUser(d){var l=d.trim().toLowerCase();return l==="test"||l==="test321";}
 function getPlayers(){return JSON.parse(localStorage.getItem(SK)||"[]");}
 function savePlayers(p){localStorage.setItem(SK,JSON.stringify(p));}
 var player=null;
@@ -699,7 +703,6 @@ function loadLadder(){
       renderLadder(Object.values(best),ld,ls,false);
     });
 }
-
 function renderLadder(players,ld,ls,isGlobal){
   if(!players||!players.length){ld.innerHTML="<div style='color:var(--dim);text-align:center;padding:10px;'>No completed runs yet.</div>";return;}
   // Sort by total time ascending (penaltyMs included)
@@ -795,6 +798,36 @@ function updateGistLeaderboard(p){
 
 function esc(s){return String(s||"").replace(/[<>&"]/g,function(c){return{"<":"&lt;",">":"&gt;","&":"&amp;","\"":"&quot;"}[c];});}
 document.getElementById("r-discord").addEventListener("keydown",function(e){if(e.key==="Enter")doRegister();});
+
+// ===== COUNTDOWN =====
+var LAUNCH_UTC = Date.UTC(2026, 4, 9, 19, 0, 0); // May 9 2026 21:00 Prague CEST
+
+function updateCountdown(){
+  var diff=LAUNCH_UTC-Date.now();
+  var wrap=document.getElementById("countdown-wrap");
+  var btn=document.getElementById("begin-btn");
+  var tel=document.getElementById("countdown-timer");
+  var disc=(document.getElementById("r-discord")?document.getElementById("r-discord").value||"":"").trim().toLowerCase();
+  var bypass=["lavamat","nextstoryteller","test321"].indexOf(disc)>=0;
+  if(!wrap)return;
+  if(diff<=0||bypass){
+    wrap.style.display="none";
+    if(btn)btn.style.display="block";
+  } else {
+    wrap.style.display="block";
+    if(btn)btn.style.display="none";
+    var h=Math.floor(diff/3600000);
+    var m=Math.floor((diff%3600000)/60000);
+    var s=Math.floor((diff%60000)/1000);
+    if(tel)tel.textContent=(h>0?(h<10?"0":"")+h+":":"")+(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+  }
+}
+setInterval(updateCountdown,500);
+updateCountdown();
+
+// Show BEGIN immediately when user types bypass name
+document.addEventListener("DOMContentLoaded",function(){
+  var inp=document.getElementById("r-discord");
+  if(inp)inp.addEventListener("input",updateCountdown);
+});
 </script>
-</body>
-</html>
