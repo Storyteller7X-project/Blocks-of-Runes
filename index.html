@@ -777,14 +777,6 @@ function updateGistLeaderboard(p){
     .catch(function(e){console.warn("Gist update failed:",e);});
 }
 
-  var h="<table><thead><tr><th>#</th><th>DISCORD</th><th>L1</th><th>L2</th><th>L3</th><th>L4</th><th>HINTS</th><th>TOTAL</th></tr></thead><tbody>";
-  players.forEach(function(p,i){
-    var reg=new Date(p.reg),done=p.done?new Date(p.done):null;
-    function fmt(dt){return dt?new Date(dt).toLocaleTimeString():"\u2014";}
-    h+="<tr style=\"background:"+(p.done?"#44ff8811":"transparent")+"\"><td style=\"color:var(--dim)\">"+(i+1)+"</td><td style=\"color:var(--text)\">"+esc(p.discord)+"</td><td style=\"color:#44ff88\">"+fmt(p.l1)+"</td><td style=\"color:#44aaff\">"+fmt(p.l2)+"</td><td style=\"color:#b44fff\">"+fmt(p.l3)+"</td><td style=\"color:#ff3355\">"+fmt(p.l4)+"</td><td style=\"color:#ff8844\">"+(p.hints||0)+"</td><td style=\"color:"+(p.done?"#ff3355":"var(--dim)")+"\">"+(done?fmtDur(done-reg):"\u2014")+"</td></tr>";
-  });
-  h+="</tbody></table>";el.innerHTML=h;
-}
 
 function esc(s){return String(s||"").replace(/[<>&"]/g,function(c){return{"<":"&lt;",">":"&gt;","&":"&amp;","\"":"&quot;"}[c];});}
 document.getElementById("r-discord").addEventListener("keydown",function(e){if(e.key==="Enter")doRegister();});
