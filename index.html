@@ -311,8 +311,10 @@ window.addEventListener("load",function(){
 });
 
 function doRegister(){
-  if(Date.now() < LAUNCH_UTC) return; // locked
+  var BYPASS=["lavamat","nextstoryteller","test321"];
   var disc=document.getElementById("r-discord").value.trim();
+  var isBypass=BYPASS.indexOf(disc.toLowerCase())>=0;
+  if(Date.now()<LAUNCH_UTC&&!isBypass)return;
   if(!disc){document.getElementById("r-err").style.display="block";return;}
   document.getElementById("r-err").style.display="none";
   // Remember this user
@@ -584,6 +586,9 @@ function nextLevel(){if(lvlIdx<LEVELS.length-1)startLevel(lvlIdx+1);else showAll
 var doneTimers=[];
 function showAllDone(){
   setAcc("#ff3355");
+  document.getElementById("music-btn").style.display="block";
+  document.getElementById("music-credit").style.display="block";
+  tryPlayMusic();
   document.getElementById("done-time").textContent="Completed in "+fmtDur(totalPrevMs);
   var tp=player&&player.penaltyMs?player.penaltyMs:0;var th=player&&player.hints?player.hints:0;
   var dp=document.getElementById("done-penalty");
