@@ -722,6 +722,13 @@ function renderLadder(players, ld, ls, isGlobal){
 }
 
 
+// submission
+function submitSheets(p){
+  if(isTestUser(p.discord))return;
+  updateGistLeaderboard(p);
+}
+
+
 // leaderboard
 function loadLadder(){
   var ld=document.getElementById("ladder-table");
