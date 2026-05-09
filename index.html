@@ -27,10 +27,10 @@ input[type=text]:focus{border-color:color-mix(in srgb,var(--acc)40%,transparent)
 .blk::after{content:"";position:absolute;inset:5px 5px 6px 6px;background:rgba(255,255,255,.08);border-radius:1px;pointer-events:none;}
 .blk.hint-locked{outline:3px solid rgba(68,255,200,.8);outline-offset:-2px;box-shadow:0 0 16px rgba(68,255,200,.6),0 0 5px rgba(68,255,200,.9) inset,0 0 12px color-mix(in srgb,var(--c,#888)48%,transparent)!important;}
 #game-grid{display:grid;padding:3px;background:rgba(18,4,40,.95);border-radius:10px;border:1px solid rgba(100,40,180,.5);backdrop-filter:blur(4px);box-shadow:0 0 30px rgba(80,0,160,.25);}
-.gc{border-radius:3px;background:rgba(50,20,90,.85);border:1px solid rgba(100,50,170,.45);}
+.gc{border-radius:3px;background:rgba(50,20,90,.85);border:1px solid rgba(100,50,170,.45);touch-action:none;}
 .gc.filled{background:transparent!important;border-color:transparent!important;cursor:grab;}
 .gc.hint-target{background:rgba(68,255,200,.18)!important;border-color:rgba(68,255,200,.7)!important;animation:hintPulse 1s ease-in-out infinite;}
-#piece-tray{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px;background:rgba(10,0,25,.94);border-radius:12px;border:1px solid var(--bdr);margin-top:10px;max-width:620px;backdrop-filter:blur(4px);}
+#piece-tray{touch-action:none;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px;background:rgba(10,0,25,.94);border-radius:12px;border:1px solid var(--bdr);margin-top:10px;max-width:620px;backdrop-filter:blur(4px);}
 .pc{background:rgba(12,4,28,.95);border:1.5px solid var(--bdr);border-radius:9px;padding:7px;cursor:grab;transition:border-color .2s,box-shadow .2s;user-select:none;-webkit-user-select:none;touch-action:none;}
 .pc:hover{border-color:color-mix(in srgb,var(--acc)45%,transparent);}
 .pc.dragging{opacity:.14;pointer-events:none;}
@@ -103,7 +103,7 @@ input[type=text]:focus{border-color:color-mix(in srgb,var(--acc)40%,transparent)
   <div id="reward-ttl"></div>
   <img id="reward-img" alt="" style="display:none;">
   <div id="reward-deck" style="display:none;"></div>
-  <button class="btn" id="reward-cont-btn">CONTINUE &#8594;</button>
+  <button class="btn" id="reward-cont-btn" style="min-height:52px;font-size:16px;letter-spacing:4px;width:100%;max-width:340px;">CONTINUE &#8594;</button>
 </div>
 
 <!-- REGISTRATION -->
@@ -518,7 +518,7 @@ function startDragFromGrid(e,r,c){
   var card=document.getElementById("pc-"+pid);if(card){card.classList.remove("placed");card.classList.add("dragging");}
   _beginDrag(e,piece,grabR,grabC,card);
 }
-function _beginDrag(e,piece,grabR,grabC,srcCard){buildFloat(piece);drag={pieceId:piece.id,piece:piece,grabR:grabR,grabC:grabC,srcCard:srcCard};moveFloat(e.clientX,e.clientY);document.addEventListener("pointermove",onDragMove,{passive:false});document.addEventListener("pointerup",onDragEnd);}
+function _beginDrag(e,piece,grabR,grabC,srcCard){buildFloat(piece);drag={pieceId:piece.id,piece:piece,grabR:grabR,grabC:grabC,srcCard:srcCard};moveFloat(e.clientX,e.clientY);if(e.pointerId!==undefined&&e.target&&e.target.setPointerCapture){try{e.target.setPointerCapture(e.pointerId);}catch(ex){}}document.addEventListener("pointermove",onDragMove,{passive:false});document.addEventListener("pointerup",onDragEnd);}
 function onDragMove(e){if(!drag)return;e.preventDefault();moveFloat(e.clientX,e.clientY);}
 function onDragEnd(e){
   if(!drag)return;document.removeEventListener("pointermove",onDragMove);document.removeEventListener("pointerup",onDragEnd);
