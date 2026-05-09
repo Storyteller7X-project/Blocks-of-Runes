@@ -545,12 +545,17 @@ function resetLevel(){
   placedSet=new Set();placements={};hintLockedPieces=new Set();
   for(var r2=0;r2<lvl.gs;r2++)for(var c2=0;c2<lvl.gs;c2++)setCellEmpty(r2,c2);
   lvl.pieces.forEach(function(p){var card=document.getElementById("pc-"+p.id);if(card)card.classList.remove("placed","dragging");});
-  // Re-place hint-locked pieces
+  // Re-place hint-locked pieces at their saved positions
   savedHints.forEach(function(h){
     var piece=null;for(var i=0;i<lvl.pieces.length;i++){if(lvl.pieces[i].id===h.pid){piece=lvl.pieces[i];break;}}
-    if(piece){doPlace(piece,piece.cells,h.r,h.c,true);hintLockedPieces.add(h.pid);}
+    if(piece){
+      var absCells=piece.cells.map(function(rc){return[h.r+rc[0],h.c+rc[1]];});
+      doPlace(piece,absCells,h.r,h.c,true);hintLockedPieces.add(h.pid);
+    }
   });
-  levelStartWall=Date.now();tickTimer();
+  // Preserve elapsed time - shift levelStartWall by time spent on hint re-placement
+  // Don't reset the clock, just keep ticking from where we were
+  tickTimer();
 }
 function checkWin(){
   for(var r=0;r<lvl.gs;r++)for(var c=0;c<lvl.gs;c++)if(board[r][c]===0)return;
