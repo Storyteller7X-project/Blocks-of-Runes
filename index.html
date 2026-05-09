@@ -556,8 +556,7 @@ function checkWin(){
   stopTimer();
   var elapsedThisLevel=(Date.now()-levelStartWall)+levelPenaltyMs;
   if(!player.rewardUnlockAt)player.rewardUnlockAt=[0,0,0,0];
-  var cdMs=levelHintCount*120000;
-  player.rewardUnlockAt[lvlIdx]=cdMs>0?Date.now()+cdMs:0;
+  player.rewardUnlockAt[lvlIdx]=0; // no cooldown
   if(!player.boards)player.boards=[];player.boards[lvlIdx]=JSON.parse(JSON.stringify(board));
   var now=new Date().toISOString();player["l"+(lvlIdx+1)]=now;
   if(lvlIdx===LEVELS.length-1){player.done=now;submitSheets(player);}
@@ -569,8 +568,8 @@ function checkWin(){
 var rewardCdTimer=null;
 function showReward(){
   var rew=REWARDS[lvlIdx];
-  var unlockAt=player.rewardUnlockAt&&player.rewardUnlockAt[lvlIdx]||0;
-  var locked=unlockAt>Date.now();
+  var unlockAt=0;
+  var locked=false; // hint cooldown disabled
   document.getElementById("reward-ttl").textContent=rew.title;document.getElementById("reward-ttl").style.color=lvl.accent;
   var ri=document.getElementById("reward-img");var rd=document.getElementById("reward-deck");ri.style.display="none";rd.style.display="none";
   if(rew.type==="image"){ri.src=rew.src;ri.style.display="block";ri.style.filter=locked?"blur(18px) brightness(.35)":"";}
@@ -689,6 +688,13 @@ function showCollectedReward(idx){
   document.getElementById("reward-cont-btn").onclick=function(){document.getElementById("reward-ov").classList.remove("on");};
   document.getElementById("reward-ov").classList.add("on");
 }
+
+// submission
+function submitSheets(p){
+  if(isTestUser(p.discord))return;
+  updateGistLeaderboard(p);
+}
+
 
 // leaderboard
 function loadLadder(){
