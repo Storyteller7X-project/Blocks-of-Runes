@@ -556,7 +556,8 @@ function checkWin(){
   stopTimer();
   var elapsedThisLevel=(Date.now()-levelStartWall)+levelPenaltyMs;
   if(!player.rewardUnlockAt)player.rewardUnlockAt=[0,0,0,0];
-  player.rewardUnlockAt[lvlIdx]=0; // no cooldown
+  var cdMs=levelHintCount*120000;
+  player.rewardUnlockAt[lvlIdx]=cdMs>0?Date.now()+cdMs:0;
   if(!player.boards)player.boards=[];player.boards[lvlIdx]=JSON.parse(JSON.stringify(board));
   var now=new Date().toISOString();player["l"+(lvlIdx+1)]=now;
   if(lvlIdx===LEVELS.length-1){player.done=now;submitSheets(player);}
@@ -568,8 +569,8 @@ function checkWin(){
 var rewardCdTimer=null;
 function showReward(){
   var rew=REWARDS[lvlIdx];
-  var unlockAt=0;
-  var locked=false; // hint cooldown disabled
+  var unlockAt=player.rewardUnlockAt&&player.rewardUnlockAt[lvlIdx]||0;
+  var locked=unlockAt>Date.now();
   document.getElementById("reward-ttl").textContent=rew.title;document.getElementById("reward-ttl").style.color=lvl.accent;
   var ri=document.getElementById("reward-img");var rd=document.getElementById("reward-deck");ri.style.display="none";rd.style.display="none";
   if(rew.type==="image"){ri.src=rew.src;ri.style.display="block";ri.style.filter=locked?"blur(18px) brightness(.35)":"";}
@@ -689,10 +690,35 @@ function showCollectedReward(idx){
   document.getElementById("reward-ov").classList.add("on");
 }
 
-// submission
-function submitSheets(p){
-  if(isTestUser(p.discord))return;
-  updateGistLeaderboard(p);
+function renderLadder(players, ld, ls, isGlobal){
+  if(!players||!players.length){
+    ld.innerHTML="<div style='color:var(--dim);text-align:center;padding:10px;font-size:11px;'>No completed runs yet.</div>";
+    if(ls)ls.textContent="";return;
+  }
+  var sorted=players.filter(function(p){return !isTestUser(p.discord||"");});
+  sorted.sort(function(a,b){return (a.totalMs||0)-(b.totalMs||0);});
+  var h="<table style='width:100%;border-collapse:collapse;font-size:12px;'>"
+    +"<thead><tr style='color:var(--dim);letter-spacing:2px;font-size:10px;'>"
+    +"<th style='padding:4px 6px;text-align:left;'>#</th>"
+    +"<th style='padding:4px 6px;text-align:left;'>PLAYER</th>"
+    +"<th style='padding:4px 6px;text-align:right;'>TIME</th>"
+    +"<th style='padding:4px 6px;text-align:right;'>HINTS</th>"
+    +"</tr></thead><tbody>";
+  sorted.forEach(function(p,i){
+    var ms=p.totalMs||0;
+    var s=Math.floor(ms/1000),m=Math.floor(s/60),h2=Math.floor(m/60);
+    s=s%60;m=m%60;
+    var t=(h2>0?(h2<10?"0":"")+h2+":":"")+(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+    h+="<tr style='border-top:1px solid rgba(100,50,170,.2);'>"
+      +"<td style='padding:4px 6px;color:var(--dim);'>"+(i+1)+"</td>"
+      +"<td style='padding:4px 6px;color:var(--text);'>"+esc(p.discord||"")+"</td>"
+      +"<td style='padding:4px 6px;text-align:right;font-family:Orbitron,monospace;color:#c9a84c;'>"+t+"</td>"
+      +"<td style='padding:4px 6px;text-align:right;color:var(--dim);'>"+(p.hints||0)+"</td>"
+      +"</tr>";
+  });
+  h+="</tbody></table>";
+  ld.innerHTML=h;
+  if(ls)ls.textContent=isGlobal?"Updated":"Local only";
 }
 
 
