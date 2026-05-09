@@ -303,6 +303,7 @@ window.addEventListener("load",function(){
       var existing=all.find(function(p){return p.discord===saved;});
       if(existing&&existing.done){
         player=existing;
+        totalPrevMs=existing.totalMs||0;
         tryPlayMusic();
         showAllDone();
       }
